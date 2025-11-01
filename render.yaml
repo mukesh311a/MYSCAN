@@ -12,9 +12,3 @@ services:
     value: change-me
   - key: PUBLIC_BASE_URL
     value: https://$(RENDER_SERVICE_FQDN)
-  - key: PERSIST_DIR
-    value: /data
-  disk:
-    name: data
-    mountPath: /data
-    sizeGB: 1
