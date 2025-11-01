@@ -1,0 +1,89 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact Owner</title>
+<link rel="stylesheet" href="/public/style.css">
+</head><body>
+<main class="container narrow">
+  <div class="card">
+    <h1><%= car.owner_name %></h1>
+    <p class="subtle">Car No: <strong><%= car.car_no %></strong></p>
+
+    <div class="grid2">
+      <button id="dialBtn" class="btn">Dial owner</button>
+      <% if (car.dl_url) { %><button id="seeDL" class="btn secondary">See DL</button><% } %>
+      <% if (car.rc_url) { %><button id="seeRC" class="btn secondary">See RC</button><% } %>
+    </div>
+
+    <p class="note">Your number stays private. Documents need a password.</p>
+  </div>
+
+  <dialog id="pwDialog">
+    <form id="pwForm">
+      <h3>Enter password</h3>
+      <input id="pwInput" type="password" placeholder="Password" required />
+      <div class="actions">
+        <button type="submit" class="btn">Unlock</button>
+        <button type="button" id="cancelPw" class="btn ghost">Cancel</button>
+      </div>
+      <p id="pwError" class="error" style="display:none;">Wrong password. Try again.</p>
+    </form>
+  </dialog>
+</main>
+
+<script>
+const carId = "<%= car.id %>";
+const dialBtn = document.getElementById('dialBtn')
+const seeDL = document.getElementById('seeDL')
+const seeRC = document.getElementById('seeRC')
+const pwDialog = document.getElementById('pwDialog')
+const pwForm = document.getElementById('pwForm')
+const pwInput = document.getElementById('pwInput')
+const pwError = document.getElementById('pwError')
+const cancelPw = document.getElementById('cancelPw')
+
+dialBtn.addEventListener('click', async () => {
+  try {
+    const r = await fetch(`/api/call/${carId}`, { method: 'POST' })
+    const data = await r.json()
+    if (data.tel) window.location.href = data.tel
+  } catch (e) {
+    alert('Network error')
+  }
+})
+
+let currentType = 'dl'
+if (seeDL) seeDL.addEventListener('click', () => { currentType = 'dl'; openPw() })
+if (seeRC) seeRC.addEventListener('click', () => { currentType = 'rc'; openPw() })
+if (cancelPw) cancelPw.addEventListener('click', () => pwDialog.close())
+
+function openPw() {
+  pwInput.value = ''
+  pwError.style.display = 'none'
+  pwDialog.showModal()
+}
+
+pwForm.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  try {
+    const r = await fetch(`/api/doc/auth/${carId}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ type: currentType, password: pwInput.value })
+    })
+    if (r.ok) {
+      const data = await r.json()
+      window.location.href = data.url
+      pwDialog.close()
+    } else if (r.status === 401) {
+      pwError.style.display = 'block'
+    } else {
+      alert('Too many attempts or error. Try later.')
+    }
+  } catch (e) {
+    alert('Network error')
+  }
+})
+</script>
+</body></html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin</title>
+<link rel="stylesheet" href="/public/style.css">
+</head><body>
+<main class="container">
+  <header class="card flex">
+    <h1>QR Admin</h1>
+    <form method="post" action="/admin/logout"><button class="btn ghost" type="submit">Log out</button></form>
+  </header>
+
+  <div class="card">
+    <a class="btn" href="/admin/create">+ Generate new QR</a>
+  </div>
+
+  <div class="card">
+    <h2>Recent cars</h2>
+    <table class="table">
+      <thead><tr><th>Owner</th><th>Car No</th><th>Created</th><th>Links</th></tr></thead>
+      <tbody>
+        <% rows.forEach(r => { %>
+          <tr>
+            <td><%= r.owner_name %></td>
+            <td><%= r.car_no %></td>
+            <td><%= new Date(r.created_at).toLocaleString() %></td>
+            <td>
+              <a href="/admin/success/<%= r.id %>">QR</a> ·
+              <a href="/admin/print/<%= r.id %>">Print</a> ·
+              <a href="/c/<%= r.id %>" target="_blank">Public</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <p class="muted">Public base URL: <strong><%= PUBLIC_BASE_URL %></strong></p>
+  </div>
+</main>
+</body></html>

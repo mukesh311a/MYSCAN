@@ -1,0 +1,49 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create QR</title>
+<link rel="stylesheet" href="/public/style.css">
+</head><body>
+<main class="container">
+  <div class="card">
+    <h1>Generate QR</h1>
+    <form method="post" action="/admin/create">
+      <div class="grid2">
+        <div>
+          <label>Owner name*</label>
+          <input name="owner_name" required>
+        </div>
+        <div>
+          <label>Car no*</label>
+          <input name="car_no" required placeholder="AB12CD3456">
+        </div>
+        <div>
+          <label>Owner mobile (for records)</label>
+          <input name="owner_phone" required placeholder="+91...">
+        </div>
+        <div>
+          <label>Proxy/Virtual number (for callers)*</label>
+          <input name="virtual_number" required placeholder="+91...">
+        </div>
+        <div>
+          <label>DL link (optional)</label>
+          <input name="dl_url" placeholder="https://...">
+        </div>
+        <div>
+          <label>RC link (optional)</label>
+          <input name="rc_url" placeholder="https://...">
+        </div>
+        <div>
+          <label>Docs password (optional)</label>
+          <input name="doc_password" type="password" placeholder="Set to protect DL/RC">
+        </div>
+      </div>
+      <% if (error) { %><p class="error"><%= error %></p><% } %>
+      <button class="btn" type="submit">Create</button>
+      <a class="btn ghost" href="/admin">Cancel</a>
+    </form>
+    <p class="muted">QR will encode: <strong><%= PUBLIC_BASE_URL %>/c/&lt;id&gt;</strong></p>
+  </div>
+</main>
+</body></html>

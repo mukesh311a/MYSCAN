@@ -1,0 +1,20 @@
+services:
+- type: web
+  name: myscan
+  env: node
+  plan: free
+  buildCommand: npm install
+  startCommand: npm start
+  envVars:
+  - key: SESSION_SECRET
+    generateValue: true
+  - key: ADMIN_PASSWORD
+    value: change-me
+  - key: PUBLIC_BASE_URL
+    value: https://$(RENDER_SERVICE_FQDN)
+  - key: PERSIST_DIR
+    value: /data
+  disk:
+    name: data
+    mountPath: /data
+    sizeGB: 1
